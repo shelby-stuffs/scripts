@@ -10,9 +10,4 @@ elif [[ "$(command -v pacman)" != "" ]]; then
     bash ~/scripts/arch/setup.sh
     cp -r ~/scripts/common/\.* ~/
     echo "source ~/scripts/arch/alias" >> ~/.zshrc
-elif [[ "$(command -v dnf)" != "" ]]; then
-    echo "Fedora Based Distro Detected"
-    bash ~/scripts/fedora/setup.sh
-    cp -r ~/scripts/common/\.* ~/
-    echo "source ~/scripts/fedora/alias" >> ~/.zshrc
 fi

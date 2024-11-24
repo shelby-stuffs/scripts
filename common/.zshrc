@@ -111,5 +111,11 @@ source $ZSH/oh-my-zsh.sh
 source ~/scripts/common/functions
 source ~/scripts/common/aliases
 
-onLogin
+# exports.
 export PATH=$PATH:/home/$USER/.local/bin
+export TZ='Europe/Samara'
+export USE_CCACHE=1
+export CCACHE_EXEC=/usr/bin/ccache
+
+onLogin
+eval $(thefuck --alias)

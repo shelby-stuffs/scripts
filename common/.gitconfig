@@ -1,7 +1,8 @@
 [user]
-	name = Omkar Chandorkar
-	email = gotenksIN@aospa.co
-	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID/l6Yi9GMuGJjmHcntZfujdE0kCtg5Lkt1ZcJLeVZP+ gotenks@RyzenBox
+	name = Alexey Shelby
+	email = shelbyhell@proton.me
+	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHMZZlTrkdl9DtCRZqRtNqc4B9/OhIHMhsVee2T6ReUr shelbyhell@ShelbyHell
+
 [gpg]
 	format = ssh
 [commit]
@@ -19,6 +20,6 @@
 [color]
 	ui = auto
 [review "gerrit.aospa.co"]
-	username = gotenksIN
+	username = ShelbyHell
 [push]
 	autoSetupRemote = true

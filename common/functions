@@ -184,3 +184,15 @@ function pdup() {
     ID=$(curl --progress-bar -T "$1" -u :$PD_API_KEY https://pixeldrain.com/api/file/ | cat | grep -Po '(?<="id":")[^"]*')
     echo -e "\nhttps://pixeldrain.com/u/$ID"
 }
+
+function f() {
+    if [ -z "$2" ]; then find | grep $1
+    elif [ "$1" = "-i" ]; then
+        if [ ! -z "$3" ]; then find $3 | grep -i $2
+        else find  | grep -i $2; fi
+    else find $2 | grep $1; fi
+}
+
+# List lib dependencies of any lib/bin
+list_blob_deps() { readelf -d $1 | grep "\(NEEDED\)" | sed -r "s/.*\[(.*)\]/\1/"; }
+alias deps="list_blob_deps"
