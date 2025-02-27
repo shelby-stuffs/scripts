@@ -1,0 +1,82 @@
+cfdisk /dev/xxx
+
+mkfs.vfat -F 32 /dev/xxx1
+### I not want use swap!
+mkfs.ext4 /dev/xxx2 or mkfs.btrfs /dev/xxx2
+
+mount /dev/xxx2 /mnt/gentoo
+mount /dev/xxx1 /mnt/gentoo/boot
+
+### I want use OpenRC or SystemD
+cd /mnt/gentoo
+wget <stage3> or links https://www.gentoo.org/downloads/mirrors/
+tar xpvf stage3-*.tar.xz --xattrs-include='*.*' --numeric-owner
+
+cat <<'EOF' >> /mnt/gentoo/etc/portage/make.conf
+
+COMMON_FLAGS="-march=native -O3 -pipe"
+CFLAGS="${COMMON_FLAGS}"
+CXXFLAGS="${COMMON_FLAGS}"
+RUSTFLAGS="${RUSTFLAGS} -C target-cpu=native"
+MAKEOPTS="-j4 -l4"
+FEATURES="${FEATURES} getbinpkg"
+FEATURES="${FEATURES} binpkg-request-signature"
+EMERGE_DEFAULT_OPTS="--binpkg-respect-use=y --getbinpkg=y"
+USE="<need setup!>"
+VIDEO_CARDS="<need setup!>"
+GRUB_PLATFROMS=efi-64 # If you use non-UEFI BIOS - comment it!
+
+EOF
+
+cat <<'EOF' >> /mnt/gentoo/etc/portage/binrepos.conf/yandexbinhost.conf
+
+# These settings were set by the catalyst build script that automatically
+# built this stage.
+# Please consider using a local mirror.
+
+[gentooyandex]
+priority = 9999
+sync-uri = https://mirror.yandex.ru/gentoo-distfiles/releases/amd64/binpackages/23.0/x86-64
+
+EOF
+
+cp --dereference /etc/resolv.conf /mnt/gentoo/etc
+arch-chroot /mnt/gentoo
+emerge-webrsync
+eselect profile list ### I want use KDE with OpenRC... Maybe... KDE with SystemD
+getuto ### It need!
+
+emerge --ask --oneshot app-portage/cpuid2cpuflags
+echo "*/* $(cpuid2cpuflags)" > /etc/portage/package.use/00cpu-flags
+
+### ok...
+emerge --ask --verbose --update --deep --newuse --getbinpkg @world
+ln -sf ../usr/share/zoneinfo/Europe/<your TZ!> /etc/localtime
+nano /etc/locale.gen ### Setup for you
+locale-gen
+eselect locale list
+eselect locale set <your locale!>
+env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
+
+emerge --ask sys-kernel/linux-firmware
+emerge --ask sys-firmware/intel-microcode # I use for now Intel!
+emerge --ask sys-kernel/gentoo-kernel-bin # need for init boot.. i build my own.
+
+exit from CHROOT!
+
+genfstab -U /mnt >> /mnt/gentoo/etc/fstab
+
+arch-chroot /mnt/gentoo
+
+echo <hostname> > /etc/hostname
+### OR
+hostnamectl hostname <hostname> # SYSTEMD!
+
+emerge --ask net-misc/dhcpcd
+
+rc-update add dhcpcd default
+rc-service dhcpcd start
+### OR
+systemctl enable dhcpcd
+
+
